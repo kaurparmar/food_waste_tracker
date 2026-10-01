@@ -1,0 +1,41 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache and build files
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Secrets and local settings (for example a MongoDB Atlas connection string)
+.env
+*.env
+config_local.py
+
+# Flask
+instance/
+*.log
+
+# MongoDB local data and dumps (if you ever run mongod from the project folder)
+data/db/
+*.bson
+dump/
+
+# Test and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Screenshots and generated exports 
+exports/
+*.csv
