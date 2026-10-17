@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Server error{% endblock %}
+{% block content %}
+<h1>500: Something went wrong</h1>
+<p>{{ message or 'An unexpected error occurred.' }}</p>
+<p class="muted">If this says it cannot reach MongoDB, start the MongoDB service and reload.</p>
+<p><a class="btn" href="{{ url_for('home') }}">Back to home</a></p>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Home | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>Mess Food Waste Overview</h1>
+<div class="cards">
+  <div class="card"><div class="label">Total wasted</div><div class="value">{{ stats.wasted_kg }} kg</div></div>
+  <div class="card"><div class="label">Waste share of cooked food</div><div class="value">{{ stats.waste_percent }}%</div></div>
+  <div class="card"><div class="label">Money lost</div><div class="value">Rs {{ '{:,}'.format(stats.money_lost) }}</div></div>
+  <div class="card"><div class="label">Average rating</div><div class="value">{{ stats.avg_rating }} / 5</div></div>
+  <div class="card"><div class="label">Dishes / logs</div><div class="value">{{ stats.dishes }} / {{ stats.logs }}</div></div>
+</div>
+
+<p class="links">
+  <a class="btn" href="{{ url_for('log_new') }}">Record meal waste</a>
+  <a class="btn orange" href="{{ url_for('recommend') }}">Cooking recommendation</a>
+  <a class="btn" href="{{ url_for('reports') }}">All reports</a>
+</p>
+
+<h2>Needs attention: more than 20% wasted</h2>
+{% if alerts %}
+<div class="table-wrap"><table>
+  <tr><th>Date</th><th>Meal</th><th>Dish</th><th>Block</th><th>Cooked kg</th><th>Wasted kg</th><th>Waste %</th></tr>
+  {% for a in alerts %}
+  <tr><td>{{ a.date.strftime('%d-%m-%Y') }}</td><td>{{ a.meal_type|title }}</td><td>{{ a.name }}</td>
+      <td>{{ a.hostel_block }}</td><td>{{ a.prepared_kg }}</td><td>{{ a.wasted_kg }}</td><td class="rejected">{{ a.waste_percent }}%</td></tr>
+  {% endfor %}
+</table></div>
+{% else %}<p class="muted">No meals above 20% waste.</p>{% endif %}
+
+<h2>Top 3 wasted dishes</h2>
+<div class="table-wrap"><table>
+  <tr><th>Dish</th><th>Wasted kg</th><th>Waste %</th><th>Money lost (Rs)</th></tr>
+  {% for t in top %}
+  <tr><td>{{ t.name }}</td><td>{{ t.total_wasted_kg }}</td><td>{{ t.waste_percent }}%</td><td>{{ t.money_lost }}</td></tr>
+  {% else %}<tr><td colspan="4">No data yet. Run setup_db.py.</td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

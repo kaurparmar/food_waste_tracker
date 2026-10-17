@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Add' if mode == 'add' else 'Edit' }} dish | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>{{ 'Add a dish' if mode == 'add' else 'Edit ' ~ dish.name }}</h1>
+<form method="post" class="form-box">
+  {% if mode == 'add' %}
+    <label for="name">Name</label><input id="name" name="name" required minlength="2" value="{{ form.get('name','') }}">
+    <label for="category">Category</label>
+    <select id="category" name="category">{% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>{% endfor %}</select>
+    <label for="cost_per_kg">Cost per kg (Rs)</label><input id="cost_per_kg" name="cost_per_kg" type="number" step="0.01" min="1" required value="{{ form.get('cost_per_kg','') }}">
+    <label for="tags">Tags (comma separated)</label><input id="tags" name="tags" value="{{ form.get('tags','') }}" placeholder="punjabi, spicy">
+    <label for="calories">Calories (optional)</label><input id="calories" name="calories" type="number" min="0" value="{{ form.get('calories','') }}">
+    <label for="protein_g">Protein g (optional)</label><input id="protein_g" name="protein_g" type="number" min="0" step="0.1" value="{{ form.get('protein_g','') }}">
+  {% else %}
+    <p class="muted">Category: {{ dish.category }} | Tags: {{ dish.tags|join(', ') if dish.tags else '-' }}</p>
+    <label for="cost_per_kg">Cost per kg (Rs)</label><input id="cost_per_kg" name="cost_per_kg" type="number" step="0.01" min="1" required value="{{ dish.cost_per_kg }}">
+    <label for="new_tag">Add a tag (optional)</label><input id="new_tag" name="new_tag">
+  {% endif %}
+  <p><button class="btn" type="submit">Save</button> <a class="btn orange" href="{{ url_for('dishes') }}">Cancel</a></p>
+</form>
+{% endblock %}
