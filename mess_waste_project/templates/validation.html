@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Validation Demo | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>Validation Demo</h1>
+<p>Each row tries to insert data directly into MongoDB. Bad data should be rejected by the database rules.</p>
+<div class="table-wrap"><table>
+  <tr><th>Test case</th><th>Result</th><th>MongoDB message</th></tr>
+  {% for r in results %}
+  <tr><td>{{ r.case }}</td><td class="{{ 'rejected' if r.outcome == 'REJECTED' else 'accepted' }}">{{ r.outcome }}</td><td>{{ r.detail }}</td></tr>
+  {% endfor %}
+</table></div>
+<p class="muted">The valid test dish is deleted again after the demo.</p>
+{% endblock %}
