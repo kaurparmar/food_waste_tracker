@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Meal Logs | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>Meal Logs</h1>
+<form method="get" class="filters">
+  <div><label>From</label><input type="date" name="start" value="{{ f.start }}"></div>
+  <div><label>To</label><input type="date" name="end" value="{{ f.end }}"></div>
+  <div><label>Meal</label><select name="meal_type"><option value="">All</option>{% for m in MEALS %}<option value="{{ m }}" {{ 'selected' if f.meal_type == m }}>{{ m }}</option>{% endfor %}</select></div>
+  <div><label>Block</label><select name="block"><option value="">All</option>{% for b in BLOCKS %}<option value="{{ b }}" {{ 'selected' if f.block == b }}>{{ b }}</option>{% endfor %}</select></div>
+  <div><label>Dish</label><select name="dish_id"><option value="">All</option>{% for d in dishes %}<option value="{{ d._id }}" {{ 'selected' if f.dish_id == d._id|string }}>{{ d.name }}</option>{% endfor %}</select></div>
+  <div><button class="btn" type="submit">Filter</button> <a class="btn orange" href="{{ url_for('log_new') }}">+ Record waste</a></div>
+</form>
+<div class="table-wrap"><table>
+  <tr><th>Date</th><th>Meal</th><th>Dish</th><th>Block</th><th>Cooked kg</th><th>Wasted kg</th><th>Waste %</th><th>Students</th><th></th></tr>
+  {% for l in logs %}
+  <tr><td>{{ l.date.strftime('%d-%m-%Y') }}</td><td>{{ l.meal_type|title }}</td><td>{{ l.dish_name }}</td><td>{{ l.hostel_block }}</td>
+      <td>{{ l.prepared_kg }}</td><td>{{ l.wasted_kg }}</td><td>{{ l.waste_percent }}%</td><td>{{ l.students_served }}</td>
+      <td><form class="inline" method="post" action="{{ url_for('log_delete', log_id=l._id) }}" onsubmit="return confirm('Delete this log and its feedback?');"><button class="btn small red" type="submit">Delete</button></form></td></tr>
+  {% else %}<tr><td colspan="9">No records match.</td></tr>
+  {% endfor %}
+</table></div>
+<p class="muted">{{ logs|length }} record(s), newest first (maximum 200 shown).</p>
+{% endblock %}

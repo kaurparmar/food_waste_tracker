@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Feedback | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>Student Feedback</h1>
+<form method="post" class="form-box">
+  <label for="log_id">Meal</label>
+  <select id="log_id" name="log_id">{% for c in choices %}<option value="{{ c.id }}">{{ c.label }}</option>{% endfor %}</select>
+  <label for="student_roll">Roll number</label><input id="student_roll" name="student_roll" required>
+  <label for="rating">Rating</label>
+  <select id="rating" name="rating">{% for r in [5,4,3,2,1] %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select>
+  <label for="comment">Comment (optional)</label><input id="comment" name="comment">
+  <p><button class="btn" type="submit">Submit</button></p>
+</form>
+<h2>Recent feedback</h2>
+<div class="table-wrap"><table>
+  <tr><th>Meal</th><th>Dish</th><th>Roll</th><th>Rating</th><th>Comment</th><th></th></tr>
+  {% for r in recent %}
+  <tr><td>{{ r.log_date.strftime('%d-%m-%Y') if r.log_date else '-' }} {{ r.meal_type }}</td><td>{{ r.dish_name }}</td><td>{{ r.student_roll }}</td><td>{{ r.rating }}</td><td>{{ r.comment }}</td>
+      <td><form class="inline" method="post" action="{{ url_for('feedback_delete', feedback_id=r._id) }}"><button class="btn small red" type="submit">Delete</button></form></td></tr>
+  {% else %}<tr><td colspan="6">No feedback yet.</td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Reports | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>Reports (MongoDB Aggregations)</h1>
+<p class="links"><a href="#a1">Waste per dish</a><a href="#a2">By meal</a><a href="#a3">Money per week</a><a href="#a4">Ratings</a><a href="#a5">By block</a></p>
+
+<h2 id="a1">A1: Which dishes waste the most?</h2>
+<p class="muted">$group, $lookup, $unwind, $project, $sort, $limit</p>
+<div class="chart-box"><canvas id="chart-dish"></canvas></div>
+<div class="table-wrap"><table><tr><th>Dish</th><th>Category</th><th>Wasted kg</th><th>Waste %</th><th>Money lost (Rs)</th></tr>
+{% for r in data.waste_per_dish %}<tr><td>{{ r.name }}</td><td>{{ r.category }}</td><td>{{ r.total_wasted_kg }}</td><td>{{ r.waste_percent }}%</td><td>{{ r.money_lost }}</td></tr>{% endfor %}</table></div>
+
+<h2 id="a2">A2: Which meal wastes the highest share?</h2>
+<p class="muted">$group, $project ($divide, $multiply), $sort</p>
+<div class="chart-box"><canvas id="chart-meal"></canvas></div>
+<div class="table-wrap"><table><tr><th>Meal</th><th>Cooked kg</th><th>Wasted kg</th><th>Waste %</th></tr>
+{% for r in data.waste_by_meal %}<tr><td>{{ r.meal_type|title }}</td><td>{{ r.prepared_kg }}</td><td>{{ r.wasted_kg }}</td><td>{{ r.waste_percent }}%</td></tr>{% endfor %}</table></div>
+
+<h2 id="a3">A3: How much money is lost each week?</h2>
+<p class="muted">$lookup, $unwind, $group ($isoWeek), $sort, $project</p>
+<div class="chart-box"><canvas id="chart-money"></canvas></div>
+<div class="table-wrap"><table><tr><th>Week</th><th>Wasted kg</th><th>Money lost (Rs)</th></tr>
+{% for r in data.money_lost %}<tr><td>{{ r.year }}-W{{ r.week }}</td><td>{{ r.wasted_kg }}</td><td>{{ r.money_lost }}</td></tr>{% endfor %}</table></div>
+
+<h2 id="a4">A4: Best and worst rated dishes</h2>
+<p class="muted">$lookup (twice), $unwind, $group ($avg), $sort</p>
+<div class="chart-box"><canvas id="chart-ratings"></canvas></div>
+<div class="table-wrap"><table><tr><th>Dish</th><th>Average rating</th><th>Votes</th></tr>
+{% for r in data.ratings %}<tr><td>{{ r.name }}</td><td>{{ r.avg_rating }}</td><td>{{ r.votes }}</td></tr>{% endfor %}</table></div>
+
+<h2 id="a5">A5: Which hostel block wastes the most (last 30 days)?</h2>
+<p class="muted">$match, $group, $project, $sort</p>
+<div class="chart-box"><canvas id="chart-block"></canvas></div>
+<div class="table-wrap"><table><tr><th>Block</th><th>Wasted kg</th><th>Waste %</th><th>Grams per student</th></tr>
+{% for r in data.waste_by_block %}<tr><td>{{ r.block }}</td><td>{{ r.wasted_kg }}</td><td>{{ r.waste_percent }}%</td><td>{{ r.grams_per_student }}</td></tr>{% endfor %}</table></div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

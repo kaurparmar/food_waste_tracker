@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Record waste | Mess Waste Tracker{% endblock %}
+{% block content %}
+<h1>Record Meal Waste</h1>
+<form method="post" class="form-box">
+  <label for="dish_id">Dish</label>
+  <select id="dish_id" name="dish_id">{% for d in dishes %}<option value="{{ d._id }}" {{ 'selected' if form.get('dish_id') == d._id|string }}>{{ d.name }}</option>{% endfor %}</select>
+  <label for="date">Date</label><input id="date" name="date" type="date" required value="{{ form.get('date', today) }}">
+  <label for="meal_type">Meal</label>
+  <select id="meal_type" name="meal_type">{% for m in MEALS %}<option value="{{ m }}" {{ 'selected' if form.get('meal_type') == m }}>{{ m }}</option>{% endfor %}</select>
+  <label for="hostel_block">Hostel block</label>
+  <select id="hostel_block" name="hostel_block">{% for b in BLOCKS %}<option value="{{ b }}" {{ 'selected' if form.get('hostel_block') == b }}>{{ b }}</option>{% endfor %}</select>
+  <label for="prepared_kg">Prepared (kg)</label><input id="prepared_kg" name="prepared_kg" type="number" step="0.1" required value="{{ form.get('prepared_kg','') }}">
+  <label for="wasted_kg">Wasted (kg)</label><input id="wasted_kg" name="wasted_kg" type="number" step="0.1" required value="{{ form.get('wasted_kg','') }}">
+  <label for="students_served">Students served</label><input id="students_served" name="students_served" type="number" required value="{{ form.get('students_served','') }}">
+  <p class="muted">No browser limits are set on purpose: MongoDB itself rejects wasted kg above prepared kg.</p>
+  <p><button class="btn" type="submit">Save log</button> <a class="btn orange" href="{{ url_for('logs') }}">Cancel</a></p>
+</form>
+{% endblock %}
