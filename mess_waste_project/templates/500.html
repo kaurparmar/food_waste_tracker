@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Server error{% endblock %}
 {% block content %}
-<h1>500: Something went wrong</h1>
-<p>{{ message or 'An unexpected error occurred.' }}</p>
-<p class="muted">If this says it cannot reach MongoDB, start the MongoDB service and reload.</p>
-<p><a class="btn" href="{{ url_for('home') }}">Back to home</a></p>
+<h1 class="text-3xl font-bold text-navy mt-0 mb-5">500: Something went wrong</h1>
+<p class="my-3">{{ message or 'An unexpected error occurred.' }}</p>
+<p class="my-3 text-muted">If this says it cannot reach MongoDB, start the MongoDB service and reload.</p>
+<p class="my-3"><a class="inline-block bg-brand text-white px-4 py-2 rounded text-sm no-underline hover:opacity-90" href="{{ url_for('home') }}">Back to home</a></p>
 {% endblock %}

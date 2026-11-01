@@ -1,23 +1,47 @@
 {% extends 'base.html' %}
 {% block title %}Feedback | Mess Waste Tracker{% endblock %}
 {% block content %}
-<h1>Student Feedback</h1>
-<form method="post" class="form-box">
-  <label for="log_id">Meal</label>
-  <select id="log_id" name="log_id">{% for c in choices %}<option value="{{ c.id }}">{{ c.label }}</option>{% endfor %}</select>
-  <label for="student_roll">Roll number</label><input id="student_roll" name="student_roll" required>
-  <label for="rating">Rating</label>
-  <select id="rating" name="rating">{% for r in [5,4,3,2,1] %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select>
-  <label for="comment">Comment (optional)</label><input id="comment" name="comment">
-  <p><button class="btn" type="submit">Submit</button></p>
+<h1 class="text-3xl font-bold text-navy mt-0 mb-5">Student Feedback</h1>
+<form method="post" class="max-w-[520px]">
+  <label for="log_id" class="block mt-2.5 mb-1 font-bold text-sm">Meal</label>
+  <select id="log_id" name="log_id" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">{% for c in choices %}<option value="{{ c.id }}">{{ c.label }}</option>{% endfor %}</select>
+
+  <label for="student_roll" class="block mt-2.5 mb-1 font-bold text-sm">Roll number</label>
+  <input id="student_roll" name="student_roll" required class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+  <label for="rating" class="block mt-2.5 mb-1 font-bold text-sm">Rating</label>
+  <select id="rating" name="rating" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">{% for r in [5,4,3,2,1] %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select>
+
+  <label for="comment" class="block mt-2.5 mb-1 font-bold text-sm">Comment (optional)</label>
+  <input id="comment" name="comment" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+  <p class="my-4"><button type="submit" class="inline-block bg-brand text-white px-4 py-2 rounded text-sm cursor-pointer hover:opacity-90">Submit</button></p>
 </form>
-<h2>Recent feedback</h2>
-<div class="table-wrap"><table>
-  <tr><th>Meal</th><th>Dish</th><th>Roll</th><th>Rating</th><th>Comment</th><th></th></tr>
+
+<h2 class="text-2xl font-bold text-navy mt-8 mb-3">Recent feedback</h2>
+<div class="overflow-x-auto"><table class="w-full border-collapse my-3 text-sm">
+  <tr>
+    <th class="bg-navy text-white text-left p-2">Meal</th>
+    <th class="bg-navy text-white text-left p-2">Dish</th>
+    <th class="bg-navy text-white text-left p-2">Roll</th>
+    <th class="bg-navy text-white text-left p-2">Rating</th>
+    <th class="bg-navy text-white text-left p-2">Comment</th>
+    <th class="bg-navy text-white text-left p-2"></th>
+  </tr>
   {% for r in recent %}
-  <tr><td>{{ r.log_date.strftime('%d-%m-%Y') if r.log_date else '-' }} {{ r.meal_type }}</td><td>{{ r.dish_name }}</td><td>{{ r.student_roll }}</td><td>{{ r.rating }}</td><td>{{ r.comment }}</td>
-      <td><form class="inline" method="post" action="{{ url_for('feedback_delete', feedback_id=r._id) }}"><button class="btn small red" type="submit">Delete</button></form></td></tr>
-  {% else %}<tr><td colspan="6">No feedback yet.</td></tr>
+  <tr class="even:bg-soft">
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.log_date.strftime('%d-%m-%Y') if r.log_date else '-' }} {{ r.meal_type }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.dish_name }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.student_roll }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.rating }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.comment }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">
+      <form class="inline" method="post" action="{{ url_for('feedback_delete', feedback_id=r._id) }}">
+        <button type="submit" class="inline-block bg-danger text-white px-2.5 py-1 rounded text-[13px] cursor-pointer hover:opacity-90">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}<tr class="even:bg-soft"><td colspan="6" class="p-2 border-b border-[#d5e3df]">No feedback yet.</td></tr>
   {% endfor %}
 </table></div>
 {% endblock %}

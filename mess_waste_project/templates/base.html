@@ -4,30 +4,78 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Mess Waste Tracker{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
 </head>
-<body>
-<header class="nav">
-  <div class="brand">Mess Waste Tracker</div>
-  <nav>
-    <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint == 'home' }}">Home</a>
-    <a href="{{ url_for('dishes') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('dish') }}">Dishes</a>
-    <a href="{{ url_for('logs') }}" class="{{ 'active' if request.endpoint in ('logs','log_new') }}">Meal Logs</a>
-    <a href="{{ url_for('feedback') }}" class="{{ 'active' if request.endpoint == 'feedback' }}">Feedback</a>
-    <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}">Reports</a>
-    <a href="{{ url_for('recommend') }}" class="{{ 'active' if request.endpoint == 'recommend' }}">Recommendation</a>
-    <a href="{{ url_for('validation_demo') }}" class="{{ 'active' if request.endpoint == 'validation_demo' }}">Validation Demo</a>
+<body class="m-0 font-[Arial,Helvetica,sans-serif] text-ink bg-white leading-normal">
+<header class="bg-navy text-white flex items-center justify-between md:justify-start gap-x-6 px-3 sm:px-6 py-3">
+  <div class="font-bold text-lg">Mess Waste Tracker</div>
+
+  <!-- Hamburger: only below md -->
+  <button id="menu-open" type="button"
+          class="md:hidden rounded p-1.5 hover:bg-brand focus:outline-none focus:ring-2 focus:ring-white/60"
+          aria-label="Open menu" aria-expanded="false" aria-controls="main-nav">
+    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <!-- Below md: a panel on the right (full width under 480px, half width above it).
+       From md up: a normal row of links. -->
+  <nav id="main-nav"
+       class="invisible fixed inset-y-0 right-0 z-50 flex w-full translate-x-full flex-col gap-1 bg-navy p-4 pt-16 shadow-2xl transition-transform duration-200 min-[480px]:w-1/2
+              md:visible md:static md:z-auto md:w-auto md:translate-x-0 md:flex-row md:flex-wrap md:bg-transparent md:p-0 md:shadow-none">
+
+    <!-- Cross button inside the panel: only below md -->
+    <button id="menu-close" type="button"
+            class="absolute right-3 top-3 rounded p-1.5 hover:bg-brand focus:outline-none focus:ring-2 focus:ring-white/60 md:hidden"
+            aria-label="Close menu">
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+
+    <a href="{{ url_for('home') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'home' else 'text-[#d5e3df]' }}">Home</a>
+    <a href="{{ url_for('dishes') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint and request.endpoint.startswith('dish') else 'text-[#d5e3df]' }}">Dishes</a>
+    <a href="{{ url_for('logs') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint in ('logs','log_new') else 'text-[#d5e3df]' }}">Meal Logs</a>
+    <a href="{{ url_for('feedback') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'feedback' else 'text-[#d5e3df]' }}">Feedback</a>
+    <a href="{{ url_for('reports') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'reports' else 'text-[#d5e3df]' }}">Reports</a>
+    <a href="{{ url_for('recommend') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'recommend' else 'text-[#d5e3df]' }}">Recommendation</a>
+    <a href="{{ url_for('validation_demo') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'validation_demo' else 'text-[#d5e3df]' }}">Validation Demo</a>
   </nav>
 </header>
-<main class="container">
+
+<!-- Blurred, dimmed page behind the open menu -->
+<div id="menu-backdrop" class="fixed inset-0 z-40 hidden bg-slate-900/40 backdrop-blur-sm md:hidden"></div>
+<main class="max-w-[1100px] mx-auto my-6 px-4">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
-      <div class="flash {{ category }}">{{ message }}</div>
+      <div class="px-3.5 py-2.5 my-2.5 rounded {{ 'bg-[#d5f5e3] text-ok' if category == 'success' else 'bg-[#fadbd8] text-danger' }}">{{ message }}</div>
     {% endfor %}
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer>Hostel Mess Food Waste Tracker | CSE494 MongoDB Project</footer>
+<footer class="text-center text-muted text-[13px] p-6">Hostel Mess Food Waste Tracker | CSE494 MongoDB Project</footer>
 {% block scripts %}{% endblock %}
 </body>
+<script>
+  const nav = document.getElementById('main-nav');
+  const backdrop = document.getElementById('menu-backdrop');
+  const openBtn = document.getElementById('menu-open');
+
+  function setMenu(open) {
+    nav.classList.toggle('translate-x-full', !open);
+    nav.classList.toggle('translate-x-0', open);
+    nav.classList.toggle('invisible', !open);
+    nav.classList.toggle('visible', open);
+    backdrop.classList.toggle('hidden', !open);
+    document.body.classList.toggle('overflow-hidden', open);   // stop page scrolling behind the menu
+    openBtn.setAttribute('aria-expanded', open);
+  }
+
+  openBtn.addEventListener('click', () => setMenu(true));
+  document.getElementById('menu-close').addEventListener('click', () => setMenu(false));
+  backdrop.addEventListener('click', () => setMenu(false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  window.addEventListener('resize', () => { if (window.innerWidth >= 768) setMenu(false); });
+</script>
 </html>

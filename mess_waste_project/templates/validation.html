@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}Validation Demo | Mess Waste Tracker{% endblock %}
 {% block content %}
-<h1>Validation Demo</h1>
-<p>Each row tries to insert data directly into MongoDB. Bad data should be rejected by the database rules.</p>
-<div class="table-wrap"><table>
-  <tr><th>Test case</th><th>Result</th><th>MongoDB message</th></tr>
+<h1 class="text-3xl font-bold text-navy mt-0 mb-5">Validation Demo</h1>
+<p class="my-3">Each row tries to insert data directly into MongoDB. Bad data should be rejected by the database rules.</p>
+<div class="overflow-x-auto"><table class="w-full border-collapse my-3 text-sm">
+  <tr>
+    <th class="bg-navy text-white text-left p-2">Test case</th>
+    <th class="bg-navy text-white text-left p-2">Result</th>
+    <th class="bg-navy text-white text-left p-2">MongoDB message</th>
+  </tr>
   {% for r in results %}
-  <tr><td>{{ r.case }}</td><td class="{{ 'rejected' if r.outcome == 'REJECTED' else 'accepted' }}">{{ r.outcome }}</td><td>{{ r.detail }}</td></tr>
+  <tr class="even:bg-soft">
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.case }}</td>
+    <td class="p-2 border-b border-[#d5e3df] font-bold {{ 'text-danger' if r.outcome == 'REJECTED' else 'text-ok' }}">{{ r.outcome }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ r.detail }}</td>
+  </tr>
   {% endfor %}
 </table></div>
-<p class="muted">The valid test dish is deleted again after the demo.</p>
+<p class="my-3 text-muted">The valid test dish is deleted again after the demo.</p>
 {% endblock %}

@@ -2,6 +2,9 @@
 venv/
 .venv/
 env/
+node_modules/
+package-lock.json
+package.json
 
 # Python cache and build files
 __pycache__/

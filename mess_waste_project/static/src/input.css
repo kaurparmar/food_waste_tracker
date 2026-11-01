@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@source "../../templates";
+
+@theme {
+  --color-navy: #0b2e3a;
+  --color-brand: #0f7b6c;
+  --color-accent: #e36414;
+  --color-soft: #eef4f2;
+  --color-muted: #5a6b73;
+  --color-ink: #1b2a33;
+  --color-danger: #c0392b;
+  --color-ok: #1e8449;
+}

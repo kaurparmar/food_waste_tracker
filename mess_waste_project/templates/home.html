@@ -1,38 +1,78 @@
 {% extends 'base.html' %}
 {% block title %}Home | Mess Waste Tracker{% endblock %}
 {% block content %}
-<h1>Mess Food Waste Overview</h1>
-<div class="cards">
-  <div class="card"><div class="label">Total wasted</div><div class="value">{{ stats.wasted_kg }} kg</div></div>
-  <div class="card"><div class="label">Waste share of cooked food</div><div class="value">{{ stats.waste_percent }}%</div></div>
-  <div class="card"><div class="label">Money lost</div><div class="value">Rs {{ '{:,}'.format(stats.money_lost) }}</div></div>
-  <div class="card"><div class="label">Average rating</div><div class="value">{{ stats.avg_rating }} / 5</div></div>
-  <div class="card"><div class="label">Dishes / logs</div><div class="value">{{ stats.dishes }} / {{ stats.logs }}</div></div>
+<h1 class="text-3xl font-bold text-navy mt-0 mb-5">Mess Food Waste Overview</h1>
+<div class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4 my-4">
+  <div class="bg-soft border-brand px-4 py-3.5 rounded">
+    <div class="text-muted text-[13px]">Total wasted</div>
+    <div class="text-[22px] sm:text-[26px] font-bold text-brand">{{ stats.wasted_kg }} kg</div>
+  </div>
+  <div class="bg-soft border-brand px-4 py-3.5 rounded">
+    <div class="text-muted text-[13px]">Waste share of cooked food</div>
+    <div class="text-[22px] sm:text-[26px] font-bold text-brand">{{ stats.waste_percent }}%</div>
+  </div>
+  <div class="bg-soft border-brand px-4 py-3.5 rounded">
+    <div class="text-muted text-[13px]">Money lost</div>
+    <div class="text-[22px] sm:text-[26px] font-bold text-brand">Rs {{ '{:,}'.format(stats.money_lost) }}</div>
+  </div>
+  <div class="bg-soft border-brand px-4 py-3.5 rounded">
+    <div class="text-muted text-[13px]">Average rating</div>
+    <div class="text-[22px] sm:text-[26px] font-bold text-brand">{{ stats.avg_rating }} / 5</div>
+  </div>
+  <div class="bg-soft border-brand px-4 py-3.5 rounded">
+    <div class="text-muted text-[13px]">Dishes / logs</div>
+    <div class="text-[22px] sm:text-[26px] font-bold text-brand">{{ stats.dishes }} / {{ stats.logs }}</div>
+  </div>
 </div>
 
-<p class="links">
-  <a class="btn" href="{{ url_for('log_new') }}">Record meal waste</a>
-  <a class="btn orange" href="{{ url_for('recommend') }}">Cooking recommendation</a>
-  <a class="btn" href="{{ url_for('reports') }}">All reports</a>
+<p class="my-4 flex flex-wrap gap-2">
+  <a href="{{ url_for('log_new') }}" class="inline-block bg-brand text-white px-4 py-2 rounded text-sm no-underline hover:opacity-90">Record meal waste</a>
+  <a href="{{ url_for('recommend') }}" class="inline-block bg-accent text-white px-4 py-2 rounded text-sm no-underline hover:opacity-90">Cooking recommendation</a>
+  <a href="{{ url_for('reports') }}" class="inline-block bg-brand text-white px-4 py-2 rounded text-sm no-underline hover:opacity-90">All reports</a>
 </p>
 
-<h2>Needs attention: more than 20% wasted</h2>
+<h2 class="text-2xl font-bold text-navy mt-8 mb-3">Needs attention: more than 20% wasted</h2>
 {% if alerts %}
-<div class="table-wrap"><table>
-  <tr><th>Date</th><th>Meal</th><th>Dish</th><th>Block</th><th>Cooked kg</th><th>Wasted kg</th><th>Waste %</th></tr>
+<div class="overflow-x-auto"><table class="w-full border-collapse my-3 text-sm">
+  <tr>
+    <th class="bg-navy text-white text-left p-2">Date</th>
+    <th class="bg-navy text-white text-left p-2">Meal</th>
+    <th class="bg-navy text-white text-left p-2">Dish</th>
+    <th class="bg-navy text-white text-left p-2">Block</th>
+    <th class="bg-navy text-white text-left p-2">Cooked kg</th>
+    <th class="bg-navy text-white text-left p-2">Wasted kg</th>
+    <th class="bg-navy text-white text-left p-2">Waste %</th>
+  </tr>
   {% for a in alerts %}
-  <tr><td>{{ a.date.strftime('%d-%m-%Y') }}</td><td>{{ a.meal_type|title }}</td><td>{{ a.name }}</td>
-      <td>{{ a.hostel_block }}</td><td>{{ a.prepared_kg }}</td><td>{{ a.wasted_kg }}</td><td class="rejected">{{ a.waste_percent }}%</td></tr>
+  <tr class="even:bg-soft">
+    <td class="p-2 border-b border-[#d5e3df]">{{ a.date.strftime('%d-%m-%Y') }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ a.meal_type|title }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ a.name }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ a.hostel_block }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ a.prepared_kg }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ a.wasted_kg }}</td>
+    <td class="p-2 border-b border-[#d5e3df] text-danger font-bold">{{ a.waste_percent }}%</td>
+  </tr>
   {% endfor %}
 </table></div>
-{% else %}<p class="muted">No meals above 20% waste.</p>{% endif %}
+{% else %}<p class="my-3 text-muted">No meals above 20% waste.</p>{% endif %}
 
-<h2>Top 3 wasted dishes</h2>
-<div class="table-wrap"><table>
-  <tr><th>Dish</th><th>Wasted kg</th><th>Waste %</th><th>Money lost (Rs)</th></tr>
+<h2 class="text-2xl font-bold text-navy mt-8 mb-3">Top 3 wasted dishes</h2>
+<div class="overflow-x-auto"><table class="w-full border-collapse my-3 text-sm">
+  <tr>
+    <th class="bg-navy text-white text-left p-2">Dish</th>
+    <th class="bg-navy text-white text-left p-2">Wasted kg</th>
+    <th class="bg-navy text-white text-left p-2">Waste %</th>
+    <th class="bg-navy text-white text-left p-2">Money lost (Rs)</th>
+  </tr>
   {% for t in top %}
-  <tr><td>{{ t.name }}</td><td>{{ t.total_wasted_kg }}</td><td>{{ t.waste_percent }}%</td><td>{{ t.money_lost }}</td></tr>
-  {% else %}<tr><td colspan="4">No data yet. Run setup_db.py.</td></tr>
+  <tr class="even:bg-soft">
+    <td class="p-2 border-b border-[#d5e3df]">{{ t.name }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ t.total_wasted_kg }}</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ t.waste_percent }}%</td>
+    <td class="p-2 border-b border-[#d5e3df]">{{ t.money_lost }}</td>
+  </tr>
+  {% else %}<tr class="even:bg-soft"><td colspan="4" class="p-2 border-b border-[#d5e3df]">No data yet. Run setup_db.py.</td></tr>
   {% endfor %}
 </table></div>
 {% endblock %}

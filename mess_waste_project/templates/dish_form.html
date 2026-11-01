@@ -1,21 +1,38 @@
 {% extends 'base.html' %}
 {% block title %}{{ 'Add' if mode == 'add' else 'Edit' }} dish | Mess Waste Tracker{% endblock %}
 {% block content %}
-<h1>{{ 'Add a dish' if mode == 'add' else 'Edit ' ~ dish.name }}</h1>
-<form method="post" class="form-box">
+<h1 class="text-3xl font-bold text-navy mt-0 mb-5">{{ 'Add a dish' if mode == 'add' else 'Edit ' ~ dish.name }}</h1>
+<form method="post" class="max-w-[520px]">
   {% if mode == 'add' %}
-    <label for="name">Name</label><input id="name" name="name" required minlength="2" value="{{ form.get('name','') }}">
-    <label for="category">Category</label>
-    <select id="category" name="category">{% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>{% endfor %}</select>
-    <label for="cost_per_kg">Cost per kg (Rs)</label><input id="cost_per_kg" name="cost_per_kg" type="number" step="0.01" min="1" required value="{{ form.get('cost_per_kg','') }}">
-    <label for="tags">Tags (comma separated)</label><input id="tags" name="tags" value="{{ form.get('tags','') }}" placeholder="punjabi, spicy">
-    <label for="calories">Calories (optional)</label><input id="calories" name="calories" type="number" min="0" value="{{ form.get('calories','') }}">
-    <label for="protein_g">Protein g (optional)</label><input id="protein_g" name="protein_g" type="number" min="0" step="0.1" value="{{ form.get('protein_g','') }}">
+    <label for="name" class="block mt-2.5 mb-1 font-bold text-sm">Name</label>
+    <input id="name" name="name" required minlength="2" value="{{ form.get('name','') }}" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+    <label for="category" class="block mt-2.5 mb-1 font-bold text-sm">Category</label>
+    <select id="category" name="category" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">{% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>{% endfor %}</select>
+
+    <label for="cost_per_kg" class="block mt-2.5 mb-1 font-bold text-sm">Cost per kg (Rs)</label>
+    <input id="cost_per_kg" name="cost_per_kg" type="number" step="0.01" min="1" required value="{{ form.get('cost_per_kg','') }}" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+    <label for="tags" class="block mt-2.5 mb-1 font-bold text-sm">Tags (comma separated)</label>
+    <input id="tags" name="tags" value="{{ form.get('tags','') }}" placeholder="punjabi, spicy" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+    <label for="calories" class="block mt-2.5 mb-1 font-bold text-sm">Calories (optional)</label>
+    <input id="calories" name="calories" type="number" min="0" value="{{ form.get('calories','') }}" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+    <label for="protein_g" class="block mt-2.5 mb-1 font-bold text-sm">Protein g (optional)</label>
+    <input id="protein_g" name="protein_g" type="number" min="0" step="0.1" value="{{ form.get('protein_g','') }}" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
   {% else %}
-    <p class="muted">Category: {{ dish.category }} | Tags: {{ dish.tags|join(', ') if dish.tags else '-' }}</p>
-    <label for="cost_per_kg">Cost per kg (Rs)</label><input id="cost_per_kg" name="cost_per_kg" type="number" step="0.01" min="1" required value="{{ dish.cost_per_kg }}">
-    <label for="new_tag">Add a tag (optional)</label><input id="new_tag" name="new_tag">
+    <p class="my-3 text-muted">Category: {{ dish.category }} | Tags: {{ dish.tags|join(', ') if dish.tags else '-' }}</p>
+
+    <label for="cost_per_kg" class="block mt-2.5 mb-1 font-bold text-sm">Cost per kg (Rs)</label>
+    <input id="cost_per_kg" name="cost_per_kg" type="number" step="0.01" min="1" required value="{{ dish.cost_per_kg }}" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
+
+    <label for="new_tag" class="block mt-2.5 mb-1 font-bold text-sm">Add a tag (optional)</label>
+    <input id="new_tag" name="new_tag" class="w-full p-2 border border-[#b8c6c2] rounded text-sm">
   {% endif %}
-  <p><button class="btn" type="submit">Save</button> <a class="btn orange" href="{{ url_for('dishes') }}">Cancel</a></p>
+  <p class="my-4 flex gap-2">
+    <button type="submit" class="inline-block bg-brand text-white px-4 py-2 rounded text-sm cursor-pointer hover:opacity-90">Save</button>
+    <a href="{{ url_for('dishes') }}" class="inline-block bg-accent text-white px-4 py-2 rounded text-sm no-underline hover:opacity-90">Cancel</a>
+  </p>
 </form>
 {% endblock %}
