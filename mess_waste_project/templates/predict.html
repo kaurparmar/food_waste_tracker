@@ -1,0 +1,182 @@
+{% extends 'base.html' %} 
+
+{% block title %}Cooking planner | Mess Waste Tracker{% endblock %} 
+
+{% block content %} 
+<h1 class="text-2xl font-semibold text-slate-900">Cooking planner</h1> 
+<p class="mt-1 text-sm text-slate-500">
+    Tell us what is being cooked and for how many students. We suggest how much to cook, based on past meals, ratings and the day of the week.
+</p> 
+
+<div class="mt-6 grid gap-6 lg:grid-cols-2"> 
+    <!-- Input Form -->
+    <form method="post" class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"> 
+        <div class="grid gap-4 sm:grid-cols-2"> 
+            <div class="sm:col-span-2"> 
+                <label for="dish_id" class="block text-sm font-medium text-slate-700">Dish</label> 
+                <select id="dish_id" name="dish_id" class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20"> 
+                    {% for d in dishes %}
+                        <option value="{{ d._id }}" {% if form.get('dish_id') == d._id|string %}selected{% endif %}>{{ d.name }}</option>
+                    {% endfor %} 
+                </select> 
+            </div> 
+            <div> 
+                <label for="date" class="block text-sm font-medium text-slate-700">Date</label> 
+                <input id="date" name="date" type="date" required value="{{ form.get('date', today) }}" class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20"> 
+            </div> 
+            <div> 
+                <label for="meal_type" class="block text-sm font-medium text-slate-700">Meal</label> 
+                <select id="meal_type" name="meal_type" class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20"> 
+                    {% for m in MEALS %}
+                        <option value="{{ m }}" {% if form.get('meal_type') == m %}selected{% endif %}>{{ m|capitalize }}</option>
+                    {% endfor %} 
+                </select> 
+            </div> 
+            <div class="sm:col-span-2"> 
+                <label for="students_expected" class="block text-sm font-medium text-slate-700">Students expected</label> 
+                <input id="students_expected" name="students_expected" type="number" min="1" required value="{{ form.get('students_expected', '400') }}" class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20"> 
+            </div> 
+        </div> 
+        <button type="submit" class="mt-6 inline-flex items-center rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2">
+            Get recommendation
+        </button> 
+    </form> 
+
+    <!-- Recommendation Panel -->
+    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"> 
+        {% if result %} 
+            <p class="text-sm text-slate-500">{{ result.dish }} · {{ result.day }} · {{ result.students }} students</p> 
+            <p class="mt-3 text-sm font-medium text-slate-600">Recommended quantity</p> 
+            <p class="text-5xl font-semibold text-teal-700">{{ result.kg }}<span class="text-xl font-normal text-slate-500"> kg</span></p> 
+            <p class="mt-2 text-sm text-slate-600">That is about {{ result.grams }} g for each student, plus 5% extra to be safe.</p> 
+            
+            <dl class="mt-6 grid grid-cols-3 gap-3 text-sm"> 
+                <div class="rounded-lg bg-slate-50 p-3">
+                    <dt class="text-xs text-slate-500">Safe range</dt>
+                    <dd class="mt-1 font-semibold text-slate-900">{{ result.min_kg }} to {{ result.max_kg }} kg</dd>
+                </div> 
+                <div class="rounded-lg bg-slate-50 p-3">
+                    <dt class="text-xs text-slate-500">Cost to cook</dt>
+                    <dd class="mt-1 font-semibold text-slate-900">Rs {{ '{:,}'.format(result.cost_to_cook) }}</dd>
+                </div> 
+                <div class="rounded-lg bg-slate-50 p-3">
+                    <dt class="text-xs text-slate-500">Dish price</dt>
+                    <dd class="mt-1 font-semibold text-slate-900">Rs {{ result.cost_per_kg }} / kg</dd>
+                </div> 
+            </dl> 
+
+            <div class="mt-4 rounded-lg border {{ 'border-emerald-200 bg-emerald-50' if result.cook_less else 'border-amber-200 bg-amber-50' }} p-4 text-sm"> 
+                <p class="font-medium {{ 'text-emerald-800' if result.cook_less else 'text-amber-800' }}"> 
+                    {% if result.difference_kg == 0 %}
+                        About the same as last time's cooking rate.
+                    {% elif result.cook_less %}
+                        {{ result.difference_kg }} kg less than last time's cooking rate
+                    {% else %}
+                        {{ result.difference_kg }} kg more than last time's cooking rate
+                    {% endif %} 
+                </p> 
+                <p class="mt-1 {{ 'text-emerald-700' if result.cook_less else 'text-amber-700' }}"> 
+                    At last time's rate, {{ result.students }} students would need {{ result.last_rate_kg }} kg. 
+                    {% if result.money_effect %}
+                        That is about Rs {{ '{:,}'.format(result.money_effect) }} {{ 'saved' if result.cook_less else 'extra to cover demand' }}.
+                    {% endif %} 
+                </p> 
+            </div> 
+
+            <div class="mt-4 rounded-lg bg-slate-50 p-4 text-sm"> 
+                <p class="font-medium text-slate-800">Last time ({{ result.last_date.strftime('%d %b') }})</p> 
+                <p class="mt-1 text-slate-600">
+                    {{ result.last_prepared_kg }} kg cooked, {{ result.last_wasted_kg }} kg wasted 
+                    <span class="font-medium {{ 'text-red-600' if result.last_waste_pct > 20 else 'text-slate-800' }}">({{ result.last_waste_pct }}%)</span>.
+                </p> 
+                <p class="mt-3 font-medium text-slate-800">Overall record of this dish</p> 
+                <p class="mt-1 text-slate-600">Served {{ result.history_meals }} times, on average {{ result.avg_waste_pct }}% wasted, rated {{ result.avg_rating }} out of 5.</p> 
+            </div> 
+
+            {% for tip in result.tips %} 
+                <p class="mt-4 rounded-lg bg-sky-50 px-4 py-3 text-sm text-sky-800">{{ tip }}</p> 
+            {% endfor %} 
+            <p class="mt-4 text-xs text-slate-400">Based on {{ result.history_meals }} earlier servings of this dish.</p> 
+        {% else %} 
+            <div class="flex h-full min-h-[14rem] flex-col items-center justify-center text-center"> 
+                <p class="text-sm font-medium text-slate-700">Your recommendation will appear here</p> 
+                <p class="mt-1 text-sm text-slate-500">Choose a dish, a date and the number of students, then press Get recommendation.</p> 
+            </div> 
+        {% endif %} 
+    </section> 
+</div> 
+
+{% if result %} 
+    {% set ins = result.insights %} 
+    <div class="mt-6 grid gap-6 lg:grid-cols-3"> 
+        <!-- Insight Breakdown -->
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"> 
+            <h2 class="text-base font-semibold text-slate-900">When this dish works best</h2> 
+            <p class="text-sm text-slate-500">Average share wasted, from past servings.</p> 
+            
+            {% if ins.by_meal or ins.by_day %} 
+                <dl class="mt-4 space-y-3 text-sm"> 
+                    {% if ins.by_meal %} 
+                        <div>
+                            <dt class="text-xs text-slate-500">Meal</dt> 
+                            <dd class="text-slate-700">
+                                Least wasted at <strong class="capitalize text-emerald-700">{{ ins.by_meal.best[0] }}</strong> ({{ ins.by_meal.best[1] }}%), 
+                                most at <strong class="capitalize text-red-600">{{ ins.by_meal.worst[0] }}</strong> ({{ ins.by_meal.worst[1] }}%).
+                            </dd>
+                        </div> 
+                    {% endif %} 
+                    {% if ins.by_day %} 
+                        <div>
+                            <dt class="text-xs text-slate-500">Day of the week</dt> 
+                            <dd class="text-slate-700">
+                                Least wasted on <strong class="text-emerald-700">{{ ins.by_day.best[0] }}</strong> ({{ ins.by_day.best[1] }}%), 
+                                most on <strong class="text-red-600">{{ ins.by_day.worst[0] }}</strong> ({{ ins.by_day.worst[1] }}%).
+                            </dd>
+                        </div> 
+                    {% endif %} 
+                </dl> 
+            {% else %} 
+                <p class="mt-4 text-sm text-slate-500">Not enough servings yet to compare meals or days.</p> 
+            {% endif %} 
+            
+            {% if ins.gap_note %}
+                <p class="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">{{ ins.gap_note }}</p>
+            {% endif %} 
+        </section> 
+
+        <!-- Alternative Recommendations -->
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2"> 
+            <h2 class="text-base font-semibold text-slate-900">Other dishes that work well for {{ ins.meal_type }}</h2> 
+            <p class="text-sm text-slate-500">Least wasted on average, with student ratings.</p> 
+            
+            {% if ins.alternatives %} 
+                <div class="mt-4 overflow-x-auto"> 
+                    <table class="min-w-full divide-y divide-slate-200 text-sm"> 
+                        <thead class="bg-slate-100"> 
+                            <tr> 
+                                <th class="px-4 py-2 text-left font-medium text-slate-700">Dish</th> 
+                                <th class="px-4 py-2 text-left font-medium text-slate-700">Average waste</th> 
+                                <th class="px-4 py-2 text-left font-medium text-slate-700">Rating</th> 
+                            </tr> 
+                        </thead> 
+                        <tbody class="divide-y divide-slate-200"> 
+                            {% for a in ins.alternatives %} 
+                            <tr> 
+                                <td class="px-4 py-2 text-slate-700">{{ a.name }}</td> 
+                                <td class="px-4 py-2 text-slate-700">{{ a.waste }}%</td> 
+                                <td class="px-4 py-2 text-slate-700">{{ a.rating }} / 5</td> 
+                            </tr> 
+                            {% endfor %} 
+                        </tbody> 
+                    </table> 
+                </div> 
+            {% else %} 
+                <p class="mt-4 text-sm text-slate-500">Not enough data for other dishes at this meal yet.</p> 
+            {% endif %} 
+            
+        </section> 
+    </div> 
+{% endif %}
+{% endblock %}
+
+  

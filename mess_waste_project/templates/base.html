@@ -40,7 +40,8 @@
     <a href="{{ url_for('feedback') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-pink-400 hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'feedback' else 'text-[#d5e3df]' }}">Feedback</a>
     <a href="{{ url_for('reports') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-pink-400 hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'reports' else 'text-[#d5e3df]' }}">Reports</a>
     <a href="{{ url_for('recommend') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-pink-400 hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'recommend' else 'text-[#d5e3df]' }}">Recommendation</a>
-    <a href="{{ url_for('validation_demo') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-pink-400 hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'validation_demo' else 'text-[#d5e3df]' }}">Validation Demo</a>
+    <a href="{{ url_for('predict') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-brand hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'predict' else 'text-[#d5e3df]' }}">Cooking Planner</a>
+    <!-- <a href="{{ url_for('validation_demo') }}" class="px-3 py-2 md:py-1.5 rounded no-underline hover:bg-pink-400 hover:text-white {{ 'bg-brand text-white' if request.endpoint == 'validation_demo' else 'text-[#d5e3df]' }}">Validation Demo</a> -->
   </nav>
 </header>
 

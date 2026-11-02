@@ -4,7 +4,7 @@ All database work is done by crud.py and analytics.py (PyMongo)."""
 from datetime import date
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from pymongo.errors import WriteError, DuplicateKeyError, PyMongoError
-
+import ml_model
 import crud
 import analytics
 import test_validation
@@ -199,6 +199,21 @@ def recommend():
 def validation_demo():
     return render_template("validation.html", results=test_validation.run_tests())
 
+
+# ------------------------------------------------------ cooking planner
+@app.route("/predict", methods=["GET", "POST"])
+def predict():
+    result = None
+    if request.method == "POST":
+        try:
+            f = request.form
+            result = ml_model.plan(f["dish_id"], f["date"], f["meal_type"],
+                                   f["students_expected"])
+        except (ValueError, PyMongoError) as e:
+            flash(friendly(e), "error")
+    return render_template("predict.html", result=result, form=request.form,
+                           dishes=crud.get_all_dishes(),
+                           today=date.today().isoformat())
 
 # ---------------------------------------------------------- error pages
 @app.errorhandler(404)

@@ -264,11 +264,9 @@ Jinja2 pages that all extend `base.html` (navigation bar, flash messages, footer
 | Open every report | Non-empty, correctly sorted results |
 | Open a wrong URL | Custom 404 page |
 
-## 10. Screenshots for the report
 
-Compass view of the three collections, each page of the website, one success and one rejected insert, one screenshot per aggregation report, and the recommendation page. Capture with **Win + Shift + S**.
 
-## 11. Troubleshooting
+## 10. Troubleshooting
 
 | Problem | Fix |
 |---|---|
@@ -278,16 +276,8 @@ Compass view of the three collections, each page of the website, one success and
 | `InvalidId` error | The id from the URL is not a valid ObjectId; use `to_object_id` inside `try/except` |
 | Empty reports | Run `python setup_db.py` to reseed |
 
-## 12. Viva quick answers
 
-- **Why MongoDB?** Flexible documents (tags, nutrition) and powerful aggregation.
-- **Embed or reference?** Embed `nutrition`; reference `dish_id` and `log_id`.
-- **How is validation done?** `$jsonSchema` plus `$expr`, and a unique index.
-- **What does `$lookup` do?** A left join that attaches matching documents from another collection.
-- **Why `insert_many` for seeding?** One network call for many documents.
-- Be ready to write a new query live, for example: `find({"hostel_block": "A", "wasted_kg": {"$gt": 10}})`.
-
-## 13. Notes
+## 11. Notes
 
 - Seed data is simulated from realistic mess menus and quantities; adjust dishes and portions to your own hostel so the dataset is truly yours.
 - Only PyMongo is used for database access (no ODM), as the task requires.
